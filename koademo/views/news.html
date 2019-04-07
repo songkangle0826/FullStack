@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>art模板引擎 news</title>
+</head>
+<body>
+	<h2>这是一个koa-art-template模板 news</h2>
+	<h2>绑定数据</h2>
+	{{ list.name }}<br/>
+	<h2>绑定html</h2>
+	{{@ list.h2 }}<br/>
+	<h2>条件</h2>
+	{{ if list.num>10 }}<strong>大于20</strong>{{ else }}<strong>小于20</strong>{{ /if }}
+
+	<h2>循环数据</h2>
+	<ul>
+	{{each list.list}}
+    	<li>{{$index}} ---{{$value}}</li>
+	{{/each}}
+	</ul>
+
+	{{ include 'public/footer.html' }}
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>art模板引擎</title>
+</head>
+<body>
+	<h2>这是一个koa-art-template模板</h2>
+
+	<h2>绑定数据</h2>
+
+	<%= list.name %>
+	<br/>
+	<%= 1+2 %>
+	<br/>
+	<%= list.h2 %>
+	<br/>
+	<%- list.h2  %>
+	<br />
+
+	<h2>提交</h2>
+	<% if(list.num>10){  %>
+		大于10
+	<%  }else{ %>
+		小于10
+	<%  } %>
+
+	<h2>循环数据</h2>
+	<ul>
+		<% for(var i=0;i<list.list.length;i++){ %>
+			<li><%= list.list[i] %></li>
+		<% } %>
+	</ul>
+
+
+	<% include('./public/footer.html') %>
+
+
+	<hr />
+
+	<script type="text/javascript">
+		console.log(document.cookie)
+	</script>
+</body>
+</html>
