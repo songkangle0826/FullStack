@@ -79,6 +79,18 @@
     b = {n:13};
     console.log(a.n)    // 12
 
+    let a = {n:10};
+    let b = a;
+    b.m = b = {n:20}
+    /*
+    * b.m = b = {n:20}
+    *  相当于 b.m = {n:20}
+    *  b = {n:20}
+    * */
+    console.log(a)
+    console.log(b)
+
+
 </script>
 </body>
 </html>
