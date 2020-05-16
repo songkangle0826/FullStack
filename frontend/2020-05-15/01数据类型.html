@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    /*
+    * 基本数据类型(值类型)
+    *   - number
+    *   - string
+    *   - boolean
+    *   - null -- 代表空的
+    *   - undefined
+    * 引用数据数据类
+    *   - object
+    *       - {}            普通对象
+    *       - []            数组对象
+    *       - /^$/          正则对象
+    *       - new Date()    date对象
+    *       - Math          Math对象
+    *       - 实例对象
+    *       - 都是某个类的一个实例
+    *   - function
+    *  ES6新增
+    *   - Symbol 创建唯一值
+    * */
+
+    // typeof  检测数据类型
+
+    /*
+    * 字符串
+    * 字符串常用的方法:
+    *   - toUpperCase()方法用于把字符串转换为大写
+    *   - toLowerCase()方法用于吧字符串转化为小写
+    *   - length 获取字符串的长度
+    *   - indexOf(searchValue,fromIndex) 在字符串中查找子字符串,如果存在则返回指定的子字符串值在字符串中首次出现的位置,否则返回-1
+    *       - searchValue  需检索的字符串值
+    *       - fromIndex    可选参数,在字符串中开始检索的位置
+    *   - lastIndexOf() 方法与indexOf相同,只是从后面开始检索
+    *   - slice(start,end)  方法可提取字符串的某个部分，并以新的字符串返回被提取的部分
+    *       - start 要抽取片断的起始下标
+    *       - end   结束位置    (不包括结束位置)
+    *       - '123'.slice(0,2) = '12'
+    *   - substring(start,stop) 方法用于提取字符串中介于两指定下标之间的字符
+    *       - start:非负整数，规定截取子串的起始位置。
+    *       - stop：可选，非负整数，截取子串的结束位置，但不包括stop处的字符串
+    *   - charAt() 返回指定索引的字符
+    *       '123'.charAt(2) = '3'  大于字符串长度的索引,返回空
+    *   - concat() 方法用于连接两个或多个字符串。返回连接后的新字符串
+    *   - split() 方法用于把一个字符串分割成字符串数组
+    *       split()什么也不传,相当于把字符串转为为数组  '123'.split()=> ['123']
+    *   - trim() 去除两边的空格
+    *   - includes()  包含
+    *   - replace() 方法用于在字符串中用一些字符替换另一些字符，或替换一个与正则表达式匹配的子串。
+    *       'Hello world'.replace('Hello','');      //" world"
+    *       'Hello world'.replace(/Hello/g,'');     //" world"
+    *       'Hello world Hello'.replace(/Hello/g,'');//" world "
+    *       'Hello world Hello'.replace(/Hello/,'');// " world Hello"
+    *   - match( ) 方法可在字符串内检索指定的值，或找到一个或多个正则表达式的匹配。
+    *       'hello world'.match('hello');       // ['hello',index: 0, input: "hello world", groups: undefined]
+    *       'hello world'.match(/hello/);       // ["hello", index: 0, input: "hello world", groups: undefined]
+    *       'hello world hello'.match(/hello/g);// ['hello','hello];
+    *       'hello world'.match(/number/);      // null
+    *   - search()，检索指定子串或者与正则表达式匹配的值，返回的值是数字。
+    *       var str="Visit W3School!";str.search(/W3School/)  // 6 相当于索引,有返回第一次出现的位置,没有返回-1
+    *
+    *  其他数据类型转为字符串: 调用toString()方法
+    *    ({}).toString()  "[object Object]"
+    *    [].toString()    ""(空字符串)
+    *    [1,3].toString() "1,3"
+    *    (/^\d$/).toString()  '/^\d$/'
+    *    true.toString()    'true'
+    *    3.toString();      '3'
+    * */
+
+
+    /*
+    * number
+    *   - 0
+    *   - 1
+    *   - 0.1
+    *   - -0.1
+    *   - Infinity   // typeof Infinity == 'number为true;
+    *   - NaN   (不是一个数,但是属于一个数)  NaN和谁都不相等(包括他自己)
+    *
+    *   isNaN(Number(字符))   先把(字符)转化为数字,隐式转换,调用的是Number()方法
+    *       - NaN: not a number 不是一个数,but是数字类型
+    *       - NaN: 和谁都不相等(包括他自己).
+    *       - isNaN： 检测当前是否不是有效数字，返回true代表不是有效数字，返回false是有效数字
+    *   isNaN运行机制:
+    *       - 1. 首先验证当前要检测的值是否为数字类型,如果不是,浏览器会默认的吧值转换为数字类型(把非数字类型转为为数字)
+    *           - 把其他基本类型转换为数字类型: 直接使用Number这个方法转换
+    *               - [字符串转数字]
+    *                   - Number('12') = 12  =>  IsNaN(12) = false
+    *                   - Number('12px') = NaN => isNaN(NaN) = true
+    *                   - Number(' ') = 0 => isNaN(0) = false
+    *                   - 如果字符串中出现任意一个非有效数字字符，结果为NaN
+    *               - [布尔值转数字]
+    *                   - Number(false) = 0 => isNaN(0) = false
+    *                   - Number(true) = 1 => isNaN(1) = true
+    *               - [其他]
+    *                   - Number(null) = 0 => isNaN(0) = false
+    *                   - Number(undefined) = NaN => isNaN(NaN) = true
+    *               - [Symbol]
+    *                   - Number(Symbol) = NaN => isNaN(NaN) = true
+    *            - 把引用数据类型值转换为数字: 先把引用值调取toString转换为字符串,然后再把字符串调取Number转换为数组
+    *               [对象]
+    *                   - ({}).toString() = '[object object]' => Number('[object object]') = NaN => isNaN(NaN) = true
+    *
+    *               [数组]
+    *                   - [].toString() = '' => Number('') = 0 => isNaN(0) = false
+    *                   - [12].toString() = '12' => Number('12') = 12 => isNaN(12) = false
+    *                   - [12,23].toString() = '12,23' => Number('12,23') = NaN  => isNaN(NaN) = true
+    *               [正则]
+    *                   - /^$/.toString() = '/^$/' => Number('/^$/') = NaN => isNaN(NaN) = true
+    *        - 2. 当前检测的值已经是数字类型,是有效数字返回false,不是有效数字返回true(数字类型中只有NaN不是有效数字,其余都是有效数字)
+    *    Number()的原理: 出现任意非有限数字字符，结果就是NaN
+    *    parseInt，parseFloat原理：从字符串最左边字符串开始查找有效数字字符，并且转换为数字，但是一旦遇到一个非有效数字字符，查找结束,如果最左边不是有效数字,则直接返回NaN
+    *       parseInt(string, radix)
+    *           - string==要被解析的字符串
+    *           - radix == 表示要解析的数字的基数。该值介于 2 ~ 36 之间。如果省略该参数或其值为 0，则数字将以 10 为基础来解析。如果它以 “0x” 或 “0X” 开头，将以 16 为基数。 如果该参数小于 2 或者大于 36，则 parseInt() 将返回 NaN。
+    *           - [1,2,3].map(parseInt)     // [1,NaN,NaN]
+    *           - [1,2,3].map((item,index)=>{ return parseInt(item,index)  })
+     * */
+    // 判断不是一个有效数字
+    console.log(typeof NaN)     // 'number'
+    console.log(isNaN('a'))     // true
+    console.log(isNaN('0'))     // false
+    console.log(isNaN(1))       // false
+    console.log(isNaN('12px'))  // true
+    console.log(isNaN(true))    // false
+    console.log(isNaN(Infinity))// false
+    // 把其他数字类型不能正常转化为number的时候,isNaN()都为true
+
+
+    /*
+    * 布尔值
+    * 只有两个值: true和false
+    *
+    * 其他数据类型转换为布尔值
+    *   -- 强制转换为布尔值 !!
+    *   规律：在js中只有“0/NaN/null/空字符串/undefined”这五个值转换为布尔类型的false，其余都是true
+    *
+    * */
+
+
+
+
+    //
+
+
+
+
+
+    /*
+    * object
+    * */
+
+    // 普通对象
+    // 普通对象的键(属性名)(一些说法: 键可以是字符串,数字,布尔, 一些说法只能是字符串)
+    // 对象的属性名一定不能试引用类型值,默认会把引用类型值转换为字符串.
+    /*
+    * 对象常用的方法
+    *   - Object.prototype 对象原型上的方法
+    *   - dir(Object)   // 对象类上的方法
+    * */
+        // -
+
+    let a = {a:1};
+    let obj = {
+        '1' : 1,
+        2: '2',
+        true: false,
+        // a: 1000,
+        '[object Object]': 1000
+    };
+    console.log(obj[true]);     // 这里就是boolean
+    console.log(obj['true']);   // 这里就是字符串
+    console.log(obj[2]);        // 这里就是数字
+    console.log(obj['2']);      // 这里就是字符串
+
+    // 数组对象
+    // 数组是特殊的对象
+    /*
+    *  数组常用的方法
+    *   - Object.prototype 数组原型上的方法
+    *   - dir(Array)
+    * */
+    let arr = [1,2,3];
+    /*
+        0: 1
+        1: 2
+        2: 3
+        length: 3   天生自带的
+    * */
+
+</script>
+</body>
+</html>

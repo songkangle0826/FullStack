@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    /*
+    * 内存:
+    *   堆(heap)栈(Stack)
+    *
+    * 编译器(把代码变成浏览器看的懂的结构)
+    *   - 词法解析
+    *   - AST抽象语法树
+    *   - 构建出浏览器能够执行的代码
+    * 引擎(V8/webkit内核)   ---白鹭引擎(基于v8封装的js库)
+    *   变量提升
+    *   作用域 / 闭包
+    *   变量对象
+    *   堆栈内存
+    *   GO/VO/AO/EC/ECStack
+    *   ...
+    * */
+
+
+
+    /*
+    * ECStack: (Execution Context Stack) 执行环境栈
+    *   js引擎想要执行代码,一定会创建一个执行栈
+    *   => 栈内存  栈内存: 执行代码
+    * EC: (Execution Context) 执行上下文
+    *   某个域下的代码执行都有自己的执行上下文
+    *       全局 EC(G) golbal
+    *       函数 EX(...(某个函数))
+    *   把创建的上下文压缩到栈中执行  => 进栈
+    *     - 执行完有的上下文就没有用了=> 出栈
+    *     - 有的还有用,会把器压缩到栈底=> 形成闭包.
+    *
+    *  GO(golbal object): 全局对象-- 在浏览器端,会把全局对象赋值给window.
+    *
+    *  var a = 12; 所有的变赋值分为三步
+    *   - 1.创建变量(声明)  == 专业术语(声明)       var a;
+    *   - 2.创建值:
+    *       - a. 基本值直接在栈中创建和存储即可    12
+    *       - b. 由于引用值是复杂的结果,所以需要特殊处理.
+    *           - (1).开辟一个存储对象中键值对(存储函数中代码)的内存空间 "堆内存"
+    *           - (2).所有的堆内存都有一个可被后续产值的16进制地址值
+    *           - (3).后续关联赋值的时候,是吧堆内存地址给与变量操作的.
+    *   - 3.让变量和值关联起来(赋值) == 专业术语(定义 defined(定义操作,赋值操作))  a = 12
+    *
+    *   null不会开辟任何内存. 把一个对象
+    *
+    *   undefined: 意料之外,我声明了,不知道想不想赋值.
+    *   null: 意料之中,空对象指针(null不会开辟任何内存),把之前变量的指针指向为空指针,把之前的内存释放了.声明了,不知道该赋值给谁,我想赋值
+    *   0: 0得开辟内存
+    *       null和undefined的区别:
+    *           想不想要复制,想要赋值=null,
+    *           不知道想不想赋值=undefined;
+    * */
+
+
+
+    let a = 12;
+    let b = a;
+    b = 13;
+    console.log(a);     // 12
+
+    let a = {n:12};
+    let b = a;
+    b['n'] = 13;
+    console.log(a.n);   // 13
+
+    let a = {n:12};
+    let b = a;
+    b = {n:13};
+    console.log(a.n)    // 12
+
+</script>
+</body>
+</html>
