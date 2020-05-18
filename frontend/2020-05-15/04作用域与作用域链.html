@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<img src="作用域和作用域链图解面试题.png" alt="">
+<script>
+    function A(y){
+        let x = 2;
+        function B(z){
+            console.log(x+y+z);
+        }
+        return B
+    }
+    let C = A(2);
+    /*
+
+         A函数执行:
+            会创建EC(A):
+                指定this指向: window
+                指定[[Scope Chain]]指向: VO(G)
+                创建AO(A): 存储函数内的变量等
+                    arguments = {0:2}
+                    y = 2
+                    x = 2
+                B函数创建(在EC(A)中的创建的):
+                    1. 开辟堆堆内存地址 => B=AAAFFF111(B函数存放的堆内存地址)
+                    2. 指向函数B的作用域 => B[[Scope]] =AO(A)
+                return 返回B的堆内存地址值AAAFFF111   === 此时这个上下文中的堆被全局变量C占用了,不能出栈销毁(不能释放).
+
+        C(3)执行(相当于AAAFFF111堆执行):
+            会创建EC(C):
+                执定this指向: window
+                指定[[Scope chain]](作用域链): AO(A)
+     创建AO(C):
+                    arguments: { 0: 3 }
+                    私有的: z = 3
+                    x/y都不是私有的: 沿着作用域链依次向上查找(作用域链机制)
+
+
+
+        代码执行:
+            1.形参全局的EC(G)(全局执行上下文)
+            2.创建VO(变量对象)
+                A函数创建(在全局EC(G)创建的):
+                    开辟堆堆内存地址 => A = AAAFFF000(A函数存放的堆内存地址)
+                    指向函数A的作用域 => A[[Scope]] = VO(G)
+                    C = 函数执行(A(2))=AAAFFF111
+                    C = AAAFFF111
+                C(3) 执行
+    */
+    C(3);
+
+    /*
+    * 作用域与作用域链
+    *
+    * 函数创建的时候,会形成作用域
+    * 函数执行的时候,会执行作用域链
+    *
+    * 作用域:
+    *   1.作用域就是代码的执行环境，全局执行环境就是全局作用域，函数的执行环境就是私有作用域，它们都是栈内存
+    *       - 在 Web 浏览器中，全局执行环境被认为是 window 对象，因此所有全局变量和函数都是作为 window 对象的属性和方法创建的
+    *       - 在 Node 环境中，全局执行环境是 global 对象
+    *   2. 函数创建
+    *       - a.创建了一个堆内存地址(堆中存放的是函数代码块与函数对象)
+    *       - b.初始化当前函数的作用域
+    *           - [[Scope]] = 所在上下文EC中的变量对象VO/AO
+    *   3. 函数执行,会把存储函数代码的堆内存中的代码压到ECStack(代码执行环境)栈中
+    *       - a.创建一个新的执行环境EC(执行上下文)
+    *       - b.初始化this指向
+    *       - c.初始化作用域链[[Scope Chain]]
+    *       - d.创建AO(活动变量对象)
+    *           - 1.初始化实参集合(arguments) ===
+    *               - 严格模式下(没有映射关系)
+    *               - 非严格模式下(有映射关系)
+    *               - 实参和形参如果length不相同,相当于的映射,不对应的不映射(在非严格模式下)
+    *           - 2.声明形参变量
+    *           - 3.变量提升
+    *           - 4.代码执行
+    *   4.当前函数执行，形成一个私有作用域A。A的上级作用域是谁，和他在哪执行的没有关系，和他在哪创建（定义）的有关系，在哪创建的，它的上级作用域就是谁
+    * 作用域链:
+    *   1. 当我们在局部作用域中，访问一个变量时，系统首先会在当前作用域中寻找(变量var的声明语句or函数的形参声明)，如找到则直接使用。反之，则继续向上一级作用域中寻找(var的声明语句or函数的形参声明)，如找到则直接使用，反之，继续向上一级作用域中去寻找…直到全局作用域
+    *   2. 在function里，用var定义的变量是局部变量；不用var定义的变量为隐式全局变量
+    * */
+
+</script>
+</body>
+</html>
