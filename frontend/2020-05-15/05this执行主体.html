@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+/*
+    this执行主体: 谁把他执行的
+    第一种: 函数执行,看前面是否有"点"
+        有: "点"前面是谁this就是谁
+        没有: this是window(严格模式下是undefined),
+            自执行函数中的this一般都是window
+            setTimeout,setInterval函数中的this都是window,
+
+            fn()  this:window
+            obj.fn() this: obj
+            obj.__proto__.fn() this: obj.__proto__
+
+    第一种: 给元素的事件行为绑定方法(DOM0/DOM2),事件触发,方法会执行,此时方法中的this一般都是当前元素本身
+        box.onclick = function(){
+            //=> this: box
+        }
+        box.addEventListener('click',function(){
+            //=> this: box
+        })
+        特殊情况: IE8及以下,基于attachEvent完成DOM2事件绑定,this是不准确的,一般指window
+        box.attachEvent('onclick',function(){
+            //=> this: window
+        })
+*/
+
+    var x = 10;  //=> window.x = 10;
+    var obj = {
+        x: 20,
+        fn: function(){
+            console.log(this.x);
+        }
+    }
+    var fn = obj.fn;
+    var box = document.getElementBy('box');
+    box.x = 20;
+
+    fn() // => this: window  10
+    obj.fn() // => this: obj 20
+    box.onclick = function(){
+        // this: box
+        obj.fn()    // this: obj  20
+    }
+    box.onclick = obj.fn()  // this: box  30
+
+</script>
+</body>
+</html>
