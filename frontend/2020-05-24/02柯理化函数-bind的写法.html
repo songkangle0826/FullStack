@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box{
+            width:100px;
+            height:100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+<div class="box" id="box"></div>
+<script>
+    let obj = {x:100};
+    function fn(y){
+        console.log(y)
+        this.x += y;
+        console.log(this)
+    }
+    // 触发点击盒子的时候,把fn执行,并且让fn中的this指向obj
+   //  box.onclick = fn  //=>this:box
+
+
+    // => call/apply都会把函数立即执行,而bind不会立即执行函数,而是预先存储一些内容(bind不兼容ie6,7,8)
+    box.onclick = fn.bind(obj,200);
+
+    // => call/apply会立即执行函数,
+    // box.onclick = fn.call(obj,200);
+
+    box.onclick = function(){
+        // 点击执行匿名函数,在匿名函数执行的时候,再把fn执行
+        fn.call(obj,200);
+    }
+
+
+    /*
+     * 柯理化函数: 一个大函数执行,返回一个小函数
+     *
+     * 柯理化函数的思想,就是利用闭包的机制,把一些内容实现预先存储和处理,等到后期需要的时候拿来即用即可
+     * */
+
+    /*
+    * bind: 预先处理内容
+    *   @params:
+    *       func:要执行的函数
+    *       context:需要改变的this指向
+    *       args:给函数传递的参数
+    *   @return
+    *       返回一个代理函数
+    * */
+    function bind(func,context,...args){
+        return function proxy(){
+            func.call(context,...args)
+        }
+    }
+    setTimeout(bind(fn,obj,200,300),1000);
+    // 上面的相当于下面的,一秒后执行bind返回的函数
+    setTimeout(function proxy(){
+        fn.call(obj,200,300);
+    },1000)
+
+
+
+    /*
+        let obj1 = {
+            fn: function(){
+                console.log(this);  //
+            }
+        }
+        // setTimeout((是不是匿名函数),1000);     // 如果是匿名函数,1s后执行,如果不是匿名函数,先执行,把执行返回的结果给了小括号
+        setTimeout(function(){
+            obj1.fn()                   // this->obj1
+        },3000)
+        setTimeout(obj1.fn,3000);         // this->window
+
+        // 这里相当于是吧obj1.fn执行的结果给了setTimeout
+        setTimeout(obj1.fn(),2000);       // this->obj1
+        setTimeout(undefined,2000);
+        setTimeout(console.log(11),6000);
+    */
+
+
+
+</script>
+<script>
+    (function(proto){
+        function bind(context=window,...outerArgs){
+            // this=> fn(要处理的函数)
+            let that = this;
+            return function proxy(...innerArgs){
+                let args = outerArgs.concat(innerArgs)
+                that.call(context,...args)
+            }
+        }
+        proto.bind = bind;
+    })(Function.prototype);
+
+    // 处理bind兼容所有浏览器的写法
+    (function(proto){
+        function bind(context){
+            // this=> fn(要处理的函数)
+            var that = this;
+            context = context || window;
+            var outerArgs = Array.prototype.slice.call(arguments,1)
+            return function proxy(){
+                var innerArgs = [].slice.call(arguments,0)
+                var args = outerArgs.concat(innerArgs);
+                that.apply(context,args)
+            }
+        }
+        proto.bind = bind;
+    })(Function.prototype)
+
+
+    function fn(y,ev){
+        console.log(y)
+        this.x += y;
+        console.log(this)
+    }
+
+    fn.bind();
+    box.onclick = fn.bind(obj,200);
+    box.onclick = function proxy(ev){
+        fn.call(obj,...[200,ev])
+    }
+
+</script>
+
+</body>
+</html>

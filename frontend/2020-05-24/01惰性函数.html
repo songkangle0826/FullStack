@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js高级编程技巧</title>
+</head>
+<body>
+<script>
+    /*
+    * 天气信息管理(查询、设置地区....)
+    * 新闻信息管理(查询、设置频道、设置地区、分享...)
+    * */
+    let queryWeather = function(){
+        // ...
+    }
+    let setCity = function(){
+        // ...
+    }
+
+    // 单独放到一个闭包之中(单例设计模式(最原始的模块化思想))
+    let watherModule = (function(){
+        var _default = '北京';
+        let queryWeather = function(){
+            // ...
+        };
+        let setCity = function(){
+            // ...
+        }
+
+        return {
+            setCity: setCity,
+            // setCity  es6
+        }
+    })();
+
+
+
+    let queryNews = function(){
+        // ...
+    };
+
+    // 单独放到一个闭包之中
+    let newsModule = (function(){
+        let _default = 'hot';
+        let queryNews = function(){
+            // ...
+            watherModule.setCity()
+        }
+        return {
+            queryNews
+        }
+    })();
+
+
+</script>
+<script>
+    /*
+    * DOM2事件绑定
+    * 标准浏览器: 元素.addEventListener()
+    * ie6,7,8: 元素.attachEvent()
+    * */
+
+    function emit(element,type,func){
+        if (element.addEventListener){
+            element.addEventListener(type,func,false)
+        }else if (element.attachEvent){
+            element.attachEvent('on'+type,func)
+        }else{
+            element['on'+type] = func;
+        }
+    }
+    emit('box','click',fn1);        // 每一次执行都得把所有的判断走一次
+    emit('box','click',fn2);        // 每一次执行都得走一次判断
+
+
+    function emit(element,type,func){
+        if (element.addEventListener){
+            emit = function(element,type,func){
+                element.addEventListener(type,func,false)
+            }
+        }else if (element.attachEvent){
+            emit = function(element,type,func){
+                element.attachEvent('on'+type,func)
+            }
+        }else{
+            emit = function(element,type,func){
+                element['on'+type] = func;
+            }
+        }
+        emit(element,type,func)
+    }
+    emit('box','click',fn1);  // 只需要做一次判断就可以了,第二次及以后的执行都是执行里面的小函数
+    emit('box','click',fn2);  // 执行里面的小函数,函数内部定义的
+</script>
+</body>
+</html>
