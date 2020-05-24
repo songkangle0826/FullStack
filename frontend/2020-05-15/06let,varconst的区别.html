@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+
+	/*
+		ECStack
+			EC(G)
+				VO(G): 全局变量对象
+				    fn = AAAFFF000;     fn[[scope]]=VO(G)
+					var a;  在当前执行上下文代码执行之前,首先会把所有带var或者function关键字的声明或者定义(带var的只是提前声明,带function会提前的声明+定义)
+					console.log(a)		// undefined
+					fn();               // 已经执行了
+					a = 12;
+					console.log(a)		//	12
+
+
+	console.log(a);		// undefined
+    fn();
+    var a = 12;
+    function fn(){
+    	console.log('ok');
+    }
+
+     */
+
+    /*
+    ECStack
+        EC(G)
+            VO(G): 全局变量对象
+            代码执行
+            let a =  12;
+
+        // console.log(a);     // 不存在变量提升
+        let a =12;
+        //=> 创建函数,一般都是基于函数表达式,这样防止其变量提升
+        let fn = function(){   // 不存在变量提升,不能再函数创建之前用
+
+        }
+        fn();
+     */
+
+    /*
+    fn();               // 5
+    function fn(){console.log(1)};
+    fn();               // 5
+    function fn(){console.log(2)};
+    fn();               // 5
+    var fn = function(){console.log(3)};
+    fn();               // 3
+    function fn(){ console.log(4) }
+    fn()                // 3
+    function fn(){ console.log(5) }
+    fn()                // 3
+
+
+    * EC(G)
+    *   VO(G)
+    *       fn = AAAFFF111
+    *          = AAAFFF222      fn不重新声明了,只是重新复制
+    *          = AAAFFF444
+    *          = AAAFFF555  变量提升解阶段,fn=AAAFFF555
+    *       fn = AAAFFF333
+    * */
+
+
+
+
+    /*
+    *
+    * */
+    // => 全局对象中声明的变量(用var声明的),也会给全局对象GO中增加一个对应的属性,但是用let声明的变量则不存在这个特点
+    var x = 12;
+    console.log(window.x); // 12
+
+    let y = 13;
+    console.log(window.y);  // undefined
+
+    function fn(){
+        /*
+        * EC(Fn)
+        *   AO(FN)
+        *       x =100;
+        * */
+        var a = 100;
+        console.log(fn.x); // undefined 仅限于全局
+    }
+
+    function fn(){
+        // 此时的x不是AO(FN)中私有变量,则向全局找,此处相当于给全局AO(G)变量对象中设置了一个x的全局变量,也相当于给全局对象GO设置了一个x的属性
+        x = 100;
+    }
+    fn();
+    console.log(window.x); // 100
+
+
+
+    /*
+    * let和var的区别
+    * 1.变量提升
+    * 2.全局对象中声明的变量(用var声明的),也会给全局对象GO中增加一个对应的属性,但是用let声明的变量则不存在这个特点
+    * 3.var声明的变量可以重复声明,let不能重复声明变量.带var的是可以重复声明的(词法解析可以审核通过,执行阶段遇到已经声明过的,不会在重新声明);但是let是不可以的,词法解析阶段都过不去,也就不存在引擎去执行代码的阶段了.
+    * 4.let存在块作用域(var没有),let存在块作用域相当于也是闭包
+    *
+    * let和const: let创建的变量,是可以更改指针指向的(可以重新赋值的),但是const声明的变量是不允许改变指针指向的.
+    * */
+
+    /*
+    * 代码:
+    *   编译阶段(编译器)
+    *       此法解析 => AST抽象语法树(给浏览器引擎去运行的)
+    *   引擎执行阶段
+    *       ECStack => EC(G) => VO(G) ...
+    *
+    * 带var的是可以重复声明的(词法解析可以审核通过,执行阶段遇到已经声明过的,不会在重新声明);
+    * 但是let是不可以的,词法解析阶段都过不去,也就不存在引擎去执行代码的阶段了. ()
+    * var a = 12;
+    * var a = 13;
+    * console.log(13;
+    *
+    * let b = 12;
+    * let b = 13;
+    * console.log(b) //=>Identifier 'b' has already been declared
+    * */
+
+    // => 10ms后连续输出5个5
+    for(var i = 0;i<5;i++){
+        setTimeout(()=>{
+            //定时器是异步操作: 不用等定时器到时间,继续下一轮循环
+            console.log(i)
+        },10)
+    }
+    // 5->5->5->5->5
+
+    for(var i = 0;i<5;i++){
+        // => 每一轮循环都执行自执行函数,形成全新的执行上下文EC
+        // 并且把每一轮循环的全局i的值,当做实参赋值给私有上下文中的私有变量i(形参赋值)
+        // 10MS后定时器触发,用到的i都是私有的EC中的保留下来的i
+        // => 充分利用闭包的机制(保存/保护)来完成的(这样处理不太好,循环多少次,就形参了多少个不销毁的EC)
+        ~function fn(i){
+            /*
+            * EC(自执行)
+            *   AO(自执行)
+            *    i = 0~4
+            *   代码执行:
+            *       创建一个匿名函数_=>{...} BBBFFF000
+            *       BBBFFF000[[scope]]: AO(自执行)
+            *       window.setTimeout()
+            * */
+            setTimeout(()=>{
+                /*
+                * EC(BBBFFF000)
+                * AO(BF0) <AO(BFO),A0(自执行)>
+                * */
+                console.log(i)
+            },10)
+        }(i);
+    }
+
+
+
+    // => let存在块作用域(var没有)
+    for(let i = 0;i<5;i++){
+        setTimeout(()=>{
+            console.log(i)
+        },10)
+    }
+    // console.log(i);     // 不存在i is not defined
+    // 0->1->2->3->4
+    {
+        //父块作用域
+        let i = 0;
+        // 第一轮循环
+        {
+            // => 字块作用域
+            setTimeout(()=>{ console.log(i);},10)
+        }
+        i++;    // i =1;
+        {
+            let i = 1;
+            // => 字块作用域
+            setTimeout(()=>{ console.log(i);},10)
+        }
+        i++;    // i = 2;
+        // ...
+    }
+
+
+
+    //
+    if(1===1){
+        let x = 100;
+        console.log(x);
+    }
+    // for循环,if判断,try..catch,switch这是形成块的一些符合的{}(除了对象以外的{}都是)
+
+
+    console.log(typeof a);  // undefined; => undefined JS的暂时性死区(暂时没有解决的BUG)
+    // let a;
+
+
+    // => let和const: let创建的变量,是可以更改指针指向的(可以重新赋值的),但是const声明的变量是不允许改变指针指向的.
+    let m = 100;
+    m = 200;
+    const z = 100;
+    z = 200;    //Assignment to constant variable.
+
+</script>
+</body>
+</html>
