@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    console.log(add(1, 2, 3));;
+    function add(...args){
+        return args.reduce((pre,item)=>{
+            return pre + item;
+        })
+    };
+
+    console.log(add1(1)(2)(3));
+    function add1(x){
+        function sum(y){
+            x = x + y
+            return sum;
+        }
+        sum.toString = function(){
+            return x;
+        }
+        return sum
+    };
+
+    console.log(add2(1)(2, 3, 4)(5)()); // 打印函数时会自动调用 toString()方法
+    function add2(...x){
+        if(x.length===0){ x = [0]};
+        let  total = eval(x.join('+'));
+        function sum(...y){
+            if(y.length===0){ y = [0] };
+            console.log(eval(x.join('+')),eval(y.join('+')),123);
+            total += eval(y.join('+'));
+            return sum;
+        }
+        sum.toString = function(){      // 重写toString()方法
+            return total;
+        };
+        return sum
+    };
+
+
+</script>
+</body>
+</html>
