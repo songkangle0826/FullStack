@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="box"></div>
+<script>
+    /*
+    * OOP(Object Oriented Programming): 面向对象程序设计
+    * POP(Procedure Oriented Programming): 面向过程程序设计
+    * */
+
+    // 对象/类/实例
+
+    /*
+    * 对象: 万物皆对象,要学习和研究的
+    * 类: 对象的细分.
+    * 实例: 类中具体的事物
+    * =============
+    * JS也是面向对象
+    *   1 -> Number小大类的实例
+    *   'A' -> String
+    *   true -> Boolean
+    *   null -> Null
+    *   undefined -> Undefined    ->  Object(大类)
+    *   [] -> Array
+    *   /^$/ -> RegExp
+    *   function -> Function
+    *   {} -> Object
+    *   每一个元素标签(元素对象)都有一个自己所属的大类
+    *       div -> HTMLDivElement -> HTMLElement -> Element -> Node -> EventTarget -> Object  js中一切最终都回归到了Object基类上.
+    *
+    *       每一个实例可以调用所属类(整条链)中的属性和方法
+    * */
+
+
+
+    /*
+    * 创建一个自定义类
+    *   1.创建一个函数(Function类的实例),直接执行就是普通函数,但是"new 执行"它则被称为一个自定义的类(也叫构造函数)
+    *       new 函数执行
+    *           形成一个全新的执行上下文EC
+    *           形成一个AO变量对象
+    *               arguments
+    *               形参赋值
+    *           初始化作用域链
+    *           [新]默认创建一个对象,而这个对象就是当前类的实例
+    *           [新]声明其this指向,让其指向这个新创建的实例
+    *           代码执行
+    *           [新]无论其是否写RETURN,都会把新创建的实例返回(特殊点)
+    * */
+    function func(){
+        // let obj = {} //=>这个对象就是实例对象
+        // this->obj
+        let x = 100;
+        this.num = x + 100; // 相当于给创建的实例对象新增一个num的属性
+        // obj.num = 200(因为在具备普通函数执行的一面,所以只有this.xxx=xxx才和创建的实例有关系,此案例中的x只是AO中的私有变量)
+        // return obj   // 默认
+        // return {};     //特殊点->用户自己返回内容,如果返回的是一个(引用类型值),则会把默认的实例给覆盖掉(此时返回的值就不在是类的实例了)
+    }
+    func(); // => this:window  AO(FUNC):{ x=100 } ..... 普通函数执行
+
+
+    let f = new func();         // 当做类执行
+    console.log(f,'f'); // f就是func这个类的实例
+
+    let f2 = new func();
+    console.log(f===f2);  //=> flase 每一次new出来的都是一个新的实例对象(一个新的堆内存地址)
+    console.log(f instanceof func); // true,默认返回的
+
+
+
+    function func1(){
+        // let obj = {} //=>这个对象就是实例对象
+        // this->obj
+        let x = 100;
+        this.num = x + 100; // 相当于给创建的实例对象新增一个num的属性
+        // obj.num = 200(因为在具备普通函数执行的一面,所以只有this.xxx=xxx才和创建的实例有关系,此案例中的x只是AO中的私有变量)
+        // return obj   // 默认
+        return {};     //特殊点->用户自己返回内容,如果返回的是一个(引用类型值),则会把默认的实例给覆盖掉(此时返回的值就不在是类的实例了)
+    }
+    let f1 = new func();
+    console.log(f1 instanceof func1); // true,用户自己创建了一个堆内存地址返回,f就不是func的实例了
+
+</script>
+<script>
+
+    function Dog(name){
+        this.name = name;
+    };
+    Dog.prototype.bark = function(){
+        console.log('wangwang');
+    };
+    Dog.prototype.sayName = function(){
+        console.log("my name is"+this.name);
+    };
+    /*
+        let sanmao = new Dog('三毛');
+        sanmao.sayName();
+        sanmao.bark();
+    */
+
+
+    /*
+     * 内置NEW的实现原理
+     * @params
+     *  Func: 操作的那个类
+     *  ARGS: NEW类的时候传递的实参对象
+     * @return
+     *  实例或者自己返回的对象
+     * */
+    function _new(Func,...args){
+        // 默认创建一个实例对象(而且属于当中这个类的一个实例)
+        /*
+            let obj = {};
+            obj.__proto__ = Func.prototype;  // ie不允许直接操作__proto__
+        */
+
+        // 创建一个新的对象,把新对象的原型链指向函数的原型,相当于上面的两句话
+        let obj = Object.create(Func.prototype);
+
+
+        // 也会把这个类当做普通函数执行
+        // 执行的时候要保证函数中的this指向创建的实例
+        let result = Func.call(obj,...args);
+        // 若客户自己返回引用值,则以自己返回的为主,否则返回创建的实例
+        if((result!=null && typeof result === 'object') || typeof result === 'object'){
+            return result;
+        }else{
+            return obj;
+        }
+
+    }
+    let sanmao = _new(Dog,'三毛');
+    console.log(sanmao)
+    sanmao.sayName();
+    sanmao.bark();
+
+
+
+
+
+</script>
+</body>
+</html>
