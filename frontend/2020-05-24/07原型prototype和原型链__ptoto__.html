@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    /*
+    * 每一个类(函数)都具备prototype,并且属性值是一个对象
+    * 对象天生具备一个属性: constructor,指向类本身
+    * 每个对象(普通对象,prototype,实例,函数等)都具备: __proto__,属性值是当前实例所属类的原型
+    * */
+
+    /*
+    * prototype: 原型(属性值是一个对象)
+    *
+    * __proto__: 原型链, 先找自己私有的,没有基于__proto__所属类的原型(prototype)上的公有属性,在没有继续向上查找,一直找到Object.prototype为止
+    *
+    * Function.prototype他是一个函数: 匿名函数(但是我们把它当做一个对象)
+    * */
+
+    function Fn(){
+        this.x = 100;
+        this.y = 200;
+        this.getX = function(){
+            console.log(this.x)
+        }
+    }
+    Fn.prototype.getX = function(){
+        console.log(this.x);
+    }
+    Fn.prototype.getY = function(){
+        console.log(this.y);
+    }
+    let f1 = new Fn;
+    let f2 = new Fn;
+
+    console.log(f1.getX === f2.getX);           // false
+    console.log(f1.getY === f2.getY);           // true
+    console.log(f1.__proto__.getY === Fn.prototype.getY); // true
+    console.log(f1.__proto__.getX === f2.getX); // false
+    console.log(f1.getX == Fn.prototype.getX);  // false
+    console.log(f1.constructor)                 // Fn
+    console.log(Fn.prototype.__proto__.constructor);    // Object
+    f1.getX();  // 100
+    f1.__proto__.getX();    // undefined  this-> f1.__proto__
+    f2.getY();              // 200
+    Fn.prototype.getY();    // undefined  this-> Fn.prototype
+
+
+
+    /*
+        Fn() 把普通函数执行  Fn 普通函数
+        new Fn和new Fn()都是创建类的实例,第二种可以传递实参
+
+        链式调用: 上一个方法执行返回的结果就是当前类的实例
+    */
+
+
+    /*
+    * 数组的面向对象理解
+    *
+    * */
+
+
+</script>
+</body>
+</html>
