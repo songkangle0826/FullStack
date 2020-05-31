@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let n = 10;
+    console.log($.type(n));
+
+    /*
+    * jq源码中的分析
+    * */
+    var class2type = {};
+    var toString = class2type.toString;
+    var hasOwn = class2type.hasOwnProperty;
+    var fnToString = hasOwn.toString;
+    var ObjectFunctionString = fnToString.call( Object );
+    "Boolean Number String Function Array Date RegExp Object Error Symbol".split( " " ).forEach(function(name){
+        class2type["[object " + name + "]"] = name.toLowerCase();
+        /*
+            class2type = {
+                "[object Boolean]": "boolean",
+                "[object Number]": "number",
+            }
+        */
+    });
+    function toType( obj ) {
+        // obj => undefined/null
+        if ( obj == null ) {
+            return obj + "";
+        }
+        return typeof obj === "object" || typeof obj === "function" ?
+            class2type[ toString.call( obj ) ] || "object" :
+            typeof obj;
+    }
+    // jQ.type = toType;
+
+
+    /*
+    * 面试: 如何检测数据类型啊?
+    *   检测数据类型常规的方式有四种: typeof instanceof constructor Object.prototype.toString.call
+    *   我之前了解过一点jq源码,jq源码中是这样做的
+    *       有个toType方法:
+    *           传入null/undefined的时候,直接返回null/undefined+''
+    *           传入引用对象的时候,返回对应的数据类型,在此之前做了映射
+    *           传入基本类型值的时候,用typeof检测
+    *
+    * */
+
+    // 检测是否为函数
+    var isFunction = function isFunction( obj ) {
+        return typeof obj === "function" && typeof obj.nodeType !== "number";
+    };
+
+    // => 检测是否为window对象  检测原理 window.window === window
+    var isWindow = function isWindow( obj ) {
+        return obj != null && obj === obj.window;
+    };
+
+    // => 是否为纯粹的对象(数组和正则都不是纯粹的对象)
+    var isPlainObject =  function isPlainObject( obj ) {
+        var proto, Ctor;
+        if ( !obj || toString.call( obj ) !== "[object Object]" ) {
+            return false;
+        }
+
+        // 获取当前对象的原型 Object.getPrototypeOf
+        proto = Object.getPrototypeOf(obj);    // 返回指定对象的原型
+
+        if ( !proto ) {
+            return true;
+        }
+        // proto.hasOwnProperty('constructor') == Object.prototype.hasOwnProperty.call(proto,'constructor')
+        Ctor = class2type.hasOwnProperty.call( proto, "constructor" ) && proto.constructor;
+        return typeof Ctor === "function" && fnToString.call( Ctor ) === ObjectFunctionString;
+    };
+
+    // => 是否为空对象(数组和正则都不是纯粹的对象)
+    var isEmptyObject = function isEmptyObject( obj ) {
+        var name;
+        // 如何能循环就不是空对象,如果不能循环就不是空对象
+        for ( name in obj ) {
+            return false;
+        }
+        return true;
+    };
+
+    // => 是否为数组或者类数组
+    function isArrayLike( obj ) {
+        var length = !!obj && "length" in obj && obj.length,
+            type = toType( obj );
+
+        if ( isFunction( obj ) || isWindow( obj ) ) {
+            return false;
+        }
+
+        return type === "array" || length === 0 ||
+            typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+        // 这里是检测类数组 typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+    }
+
+</script>
+</body>
+</html>

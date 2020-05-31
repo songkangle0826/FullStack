@@ -7,10 +7,96 @@
     <title>Document</title>
 </head>
 <body>
-    <!-- 四种检测数据类型的方式 -->
+    <!-- 数据类型四种检测的方式 -->
     <!--
         typeof
-
+        instanceof
+        constructor
+        Object.prototype.toString.call()
     -->
+
+    <script>
+        /*
+        * 检测数据类型1: typeof
+        *   返回结果都是字符串
+        *   字符串中包含了对应的数据类型
+        *       - "number"
+        *       - "string"
+        *       - "boolean"
+        *       - typeof undefined => "undefined"
+        *       - typeof Symbol() => "symbol"
+        *       - typeof function(){} => "function"
+        *
+        *       [局限性],null不是对象,它是空对象指针
+        *       - typeof null => "object"   null=>空对象指针
+        *       - typeof {} / [] / ... 所有的对象都是返回字符串"object",所以无法基于typeof判断是数组还是正则还是其他..
+        *
+        * */
+        console.log(typeof 12); // '字符串number'
+        console.log(typeof []); // "object"
+        console.log(typeof typeof []);  // "string"
+    </script>
+
+
+    <script>
+        /*
+        * 数据类型检测2: instanceof
+        *  检测某个实例是否属于这个类.
+        *   它检测的底层机制: 所有出现在其原型链上的类,检测结果都是TRUE
+        *  [局限性]: 改变原型链的时候就不真实了
+        *   - 由于可以基于__proto__或者prototype改动原型链的动向,所以基于onstanceof检测出来的结果不一定是准确的
+        *   - 基本数据类型的值,连对象都不是,更没有__proto__,虽说也是所属类的实例,在js中也可以调取所属类原型上的方法,但是instanceof是不认的.
+        *       (12).__proto__ 这么做相当于 (new Number).__proto__
+        * */
+        console.log(12 instanceof Number);                  // false
+        console.log(new Number(12) instanceof Number);      // true
+
+        console.log([] instanceof Array);                   // true
+        console.log({} instanceof Array);                   // true
+
+
+        function Fn(){}
+        Fn.prototype.__proto__ = Array.prototype;
+        let f = new Fn();
+        // => 原型链: f-> Fn.prototype -> Array.prototype -> Object.prototype
+        console.log(f instanceof Array) // true
+        console.log(Fn instanceof Function)
+    </script>
+
+    <script>
+        /*
+         * 数据类型检测3: constructor;
+         *  [局限性]: 不准确:
+         *      - 可以手动更改原型上的constructor
+         *      - 可以手动更改原型,constructor也会随之改动
+         * */
+        arr.constructor === Array // true
+    </script>
+
+
+    <script>
+        /*
+        * 数据类型检测4: Object.prototype.toString.call/({}).toString.call;
+        *   不是用来转换为字符串的,而是返回当前类所属类的信息
+        *   格式:
+        *       "[object 所属类信息]"
+        *       "[object Object/Array/Date/Function/Null/Undefined/Number/String/Bollean/Symbol...]"
+        *   这种方式基本上没有什么局限性,是检测数据类型最准确的方式
+        * */
+        // Number/String/Boolean/Symbol他们的原型上都有:
+            // toString(转换字符串) / valueOf(返回原始值)
+
+        // Array/RegExp/Function等内置的原型上都有
+            // toString: 转换为字符串的
+
+        // Object的原型上:
+            // toString: 返回当前实例所属类的信息
+            // valueOf: 返回原始值,基本类型值
+
+        Object.prototype.toString.call([]); //"[object Array]"
+        Object.prototype.toString.call({}); //"[object Object]"
+        ({}).toString.call();
+    </script>
+
 </body>
 </html>
