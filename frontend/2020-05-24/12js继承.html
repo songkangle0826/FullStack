@@ -54,7 +54,7 @@
     *       - 1.并不会吧父类中的方法克隆一份给子类,而是建立了子类和父类之间的原型链查找机制
     *     问题:
     *       - 1.因为重定向子类的原型后,默认丢失了原本的constructor属性(或者原本在原型上设置的属性和方法)
-    *       - 2.子类或者子类的实例可以基于原型链"肆意修改"父类上的属性方法,对父类造成一些"不必要的破坏"
+    *       - 2.子类或者子类的实例可以基于原型链"肆意修改"父类上的属性方法,对父类造成一些"不必要的破坏",例如b.__prototype.getX = null;
     *       - 3.会把父类中私有的属性方法作为子类公有的属性和方法继承过来.(父类中不管是公有还是私有,最后都变成子类公有的)
     * */
     function A(){
@@ -81,18 +81,199 @@
 </script>
 <script>
     /*
-     * 原型继承
+     * 方案二: call继承
+     *  call继承原理: 把父类当做普通函数执行,让其执行的时候,方法中的this变为子类的实例即可.
+     *  call继承特点:
+     *      1.-只能继承父类中的私有属性(继承父类的私有属性赋值给子类实例的私有属性),而且类似于拷贝(浅拷贝),而不是查找指向(链式查找).
+     *      2.-只是把父类当做普通的方法执行,所以父类原型上的公有方法无法继承
      * */
+    (function(){
+        function A(){
+            this.x = 100;
+            this.getName = function(){  // A私有的方法
+                console.log('我没有名字')
+            }
+        }
+        A.prototype.getX = function getX(){
+            console.log(this.x)
+        }
+        function B(){
+            // CALL继承
+            A.call(this); // this.x = 100,this.getName = function
+            this.y = 200;
+        }
+        B.prototype.getName = function getX(){
+            console.log("获取名字的属性")
+        }
+        B.prototype.getY = function getX(){
+            console.log(this.y)
+        }
+        let b = new B();        // b
+        console.log(b)
+    })()
 </script>
 <script>
     /*
-     * 原型继承
+     * 方案三: 寄生组合继承
+     *  寄生组合继承原理: (CALL继承+变异版的原型继承共同完成的)
+     *      - CALL继承: 私有到私有
+     *      - 变异版的原型继承: 公有到公有
+     *  寄生组合继承特点:
+      *     - 因为重定向子类的原型后,默认丢失了原本的constructor属性(或者原本在原型上设置的属性和方法)
      * */
+    (function(){
+        function A(){
+            this.x = 100;
+            /*
+                this.getName = function(){  // A私有的方法
+                    console.log('我没有名字')
+                }
+            */
+        }
+        A.prototype.getX = function getX(){
+            console.log(this.x)
+        }
+        function B(){
+            // CALL继承: 继承私有的属性
+            A.call(this);   // this.x = 100,this.getName = function
+            this.y = 200;
+        };
+        // 继承公有的属性
+        B.prototype = Object.create(A.prototype);   // Object.create(OBJ)  创建一个空对象,让其__proto__执行OBJ(把OBJ作为空对象的原型)
+        B.prototype.constructor = B;
+
+        /*
+        * 上面写成方法: 继承公有属性
+        * */
+        function inheritPrototype(B,A){
+            // 继承组合继承
+            var obj = Object.create(A.prototype);
+            obj.constructor = B;
+            B.prototype = obj;
+        }
+        /*
+        B.prototype.getName = function getX(){
+            console.log("获取名字的属性");
+        };
+        */
+        B.prototype.getY = function getX(){
+            console.log(this.y);
+        };
+        let b = new B();                // b
+        console.log(b,'继承组合继承')
+    })()
 </script>
 <script>
     /*
-     * 原型继承
+     * es6的语法: class
      * */
+    (function(){
+        class A{        // class是用C语言实现的
+            constructor(){
+                this.x = 100;
+            }
+            // 这是给私有设置属性=>这样写和在constructor中紫萼this[xxx]=[xxx]没有任何区别
+
+            num = 10;       // es7的写法
+            // 给原型上加方法A.prototype = getX(){}
+            getX(){
+                console.log(this.x);
+            }
+            // => 把A当做普通对象设置的属性和方法
+            static n = 200;
+            static getN(){
+                console.log(n)
+            }
+        }
+        // console.log(new A)
+        // console.log(A.n);
+
+        class B extends A{     // extends: 相当于公有继承公有  B.prototype = Object.create(A.prototype); B.prototype.constructor = B;
+            constructor(){
+                super();       // 一旦使用了extends实现继承,只有自己写了constructor,就必须写super;  super<=>等价于 A.call(this)
+                this.y = 200;
+            }
+            getY(){
+                console.log(y)
+            }
+        }
+        let b = new B();
+        console.log(b)
+    })()
+
+</script>
+<script>
+    /*
+    * 真实项目中使用继承的地方
+    *   1.-React创建组件
+    *       class A extends Component{}
+    *   2.-自己写插件或者写类库的时候
+    * */
+    class Utils {
+
+    };
+    class Dialog extends Utils{
+
+    };
+
+    let arr = [
+        {
+            text: '时令生鲜',
+            value: '1'
+        },
+        {
+            text: '饮品之佳',
+            value: '2'
+        },
+        {
+            text: '地道食材',
+            value: '3'
+        },
+        {
+            text: '鲜花礼品',
+            value: '4'
+        },
+        {
+            text: '美味食光',
+            value: '5'
+        },
+        {
+            text: '滋补养生',
+            value: '6'
+        },
+        {
+            text: '家居生活',
+            value: '7'
+        },
+        {
+            text: '轻奢配饰',
+            value: '8'
+        },
+        {
+            text: '匠心非遗',
+            value: '9'
+        },
+        {
+            text: '海外甄选',
+            value: '10'
+        },
+    ];
+    let goodsTypeList = [];
+    arr.forEach((item,index)=>{
+        goodsTypeList.push({
+            text: item.text,
+            value: item.value,
+            selected: false
+        })
+    })
+
+
+//    this.goodsTypeList = arr.map((item)=>{
+//        let obj = {...item,selected:false}
+//        return obj
+//    });
+    console.log(goodsTypeList);
+
 </script>
 
 </body>
