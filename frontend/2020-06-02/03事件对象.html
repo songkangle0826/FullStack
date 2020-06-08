@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box{
+            width:100px;
+            height:100px;
+            background: #f70000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 事件对象和事件传播机制 -->
+    <div id="box"></div>
+    <script>
+        /*
+        * 给元素的时间行为绑定方法,当事件行为触发,方法会被执行,不仅被执行,而且还会把当前操作的相关信息传递给这个函数=>"事件对象";
+        *   如果是鼠标操作: 获取的是MouseEvent类的实例 => "鼠标事件对象";
+        *       属性事件对象-> MouseEvent.prototype -> UIEvent.prototype -> Event.prototype => Object.prototype
+        *   如果是键盘操作: 获取的是KeyboardEvent类的实例 => "键盘事件对象";
+        *
+        *   除了以上还有: 普通事件对象(Event) 和 手指事件对象(TouchEvent)等
+        *
+        * */
+        let obj = null
+        box.onclick = function(ev){
+            /*
+            * 鼠标时间对象有哪些东西
+            *
+            *   clientX/clientY:        // 当前鼠标触发距离当前窗口左上角的X/Y轴坐标
+                pageX/pageY:            // 触发点距离当前页面(body)左上角的X/Y轴的坐标
+                type: 当前时间触发的类型
+                target: 事件源,操作的是哪个元素那个就是事件源.在不兼容的浏览器中可以使用srcElement获取,也代表事件源.
+
+                在Event原型上有
+                preventDefault(): 用来阻止默认行为的方法,不兼容的浏览器中用ev.returnValue = false也可以阻止默认行为
+                stopPropagation(): 阻止冒泡传播,不兼容的浏览器中用ev.camcelBubble=true也可阻止冒泡行为
+            * */
+            console.log(ev,'哇咔咔');
+        };
+        /*
+        * 事件对象和函数以及给谁绑定的事件没啥必然关系,它存储的是当前本次操作的相关信息,操作一次只能有一份信息,所以在那个方法中获取的都是一样的.
+        * 第二次操作的信息会把上一次操作存储的信息替换掉.
+        *   => 每一次事件触发,浏览器都会这样处理一次啊
+        *       - 1.捕获到当前操作的行为(把当前信息获取到),通过创建MouseEvent等类的实例,得到事件对象EV
+        *       - 2.通知所有绑定的方法(符合执行条件的)开始执行,并且把EV当做实参传递给每个方法,所有在每个方法中得到的事件对象其实是一个
+        *       - 3.后面在重新触发这个事件行为,会重新获取本次操作的信息,用新的信息替换老的信息,然后继续之前的步骤.
+        * */
+        box.addEventListener('click',function(ev){
+            console.log(ev) // 与document.click是一样的
+        });
+        document.body.click = function(ev){
+            console.log(ev == obj,12)
+        }
+
+        window.onload = function(ev){
+            console.log(ev);
+        }
+    </script>
+</body>
+</html>
