@@ -35,7 +35,7 @@ router.get('/',async (ctx)=>{
 	// 正常配置cookies
 	ctx.cookies.set('userInfo','zhangsna',{
 		maxAge: 60*1000*60,
-		expires: '2019-21-01',
+		expires: '2019-21-01day',
 		path: '/news',  //配置可以访问的页面
 		//domain: '', //正常情况下不要设置 默认就是当前域下的所有页面都可以访问
 		//secure:
