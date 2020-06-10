@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    {
+        let str = 'http://www.baidu.com?lx=08&url=http://www.baidu.con/aa= 12&name=哈哈哈';
+
+        /*
+        * encodeURI / decodeURI : 只能把空格和中文进行编码,把空格编码成%20,所以一般用这种方式处理整个url的编码
+        * */
+        let str1 = encodeURI(str);
+        console.log(decodeURI(str1));
+    }
+    // 客户端和服务器端都支持这两中编码encodeURI / decodeURI || encodeURIComponent / decodeURIComponent (客户端和服务器端进行编码信息一般基于这两种方式)
+    {
+        let str = 'http://www.baidu.com?lx=08&url=http://www.baidu.con/aa= 12&name=哈哈哈';
+        /*
+        * encodeURIComponent / decodeURIComponent : 会把整个所有的特殊字符和汉字进行编码,一般不会处理整个url编码,只会处理传递的没一个参数
+        * */
+        let  str2 = encodeURIComponent(str);
+        console.log(str2);
+        console.log(`http://www.baidu.com?lx=08&url=${ encodeURIComponent('http://www.baidu.con/aa= 12') }&name=${encodeURIComponent('哈哈哈')}`)
+        // http://www.baidu.com?lx=08&url=http%3A%2F%2Fwww.baidu.con%2Faa%3D%2012&name=%E5%93%88%E5%93%88%E5%93%88
+    }
+
+    {
+        /*
+        * escape / unescape : 不一定所以后端有,所以一般只用于客户端自己内部编码,例如:存储cookie信息,把存储的中文进行编码和解码.特殊字符和汉字也可以编码
+        * */
+        console.log(escape("哈哈哈"));
+        console.log(unescape('%u54C8%u54C8%u54C8'))
+
+        console.log(escape("?a=12"));
+        console.log(unescape('%3Fa%3D12'))
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>前端性能优化</title>
+    <style>
+        /*
+            内嵌式样式也可以减少HTTP的请求次数: 尤其是移动端的开发
+        */
+    </style>
+</head>
+<body>
+    <!--
+        前端性能优化:
+            骨架屏技术(首屏内容有服务器渲染或者开始展示占位结构,客户端在单独获取数据渲染)
+            数据做异步分批加载,开始只加载第一屏的数据,滑动到第几屏加载这一屏的数据和图片
+        一: 减少HTTP请求次数和请求的大小
+            - 文件合并(尽可能使用css内嵌式)
+            - 雪碧图 CSS sprite
+            - 图片base64      //base64代码很多,不方便开发和维护(慎用),基于webpack的相关加载器file-loader可以自动把一些图片转换为base64;
+            - 尽量使用字体图标
+            - 图片懒加载
+            - 音视频取消预加载(播放的时候再去加载音视频文件,对于自动播放采取延迟播放处理)
+            - 在客户端和服务器端进行信息交户的时候,尽可能基于JSON格式来进行传送(JSON格式的数据处理方便,资源偏偏小).
+            - 开启服务器端的gzip压缩(基于服务器压缩,拿回来的数据会小一点)
+
+        二: 建立缓存机制(缓存技术)
+            - 把一些请求回来的信息进行本地存储(缓存存储),在缓存有效期内,再次请求资源,直接从缓存中获取数据,而不是服务上从新拉取
+                - DNS预获取
+                - 资源文件的强制缓存和协商缓存(304)
+                - 数据也可以缓存(把从服务器获取的数据存储到本地: cookie/localstorage/redux/vuex等,设置期限,在期限内,直接从本地获取数据即可)
+                - 离线缓存(一般很少用) mainfest;
+                - CDN区域分布式服务器部署(费钱)
+        三: 代码上的优化
+            - 减少DOM的重绘和回流
+            - 在JS中尽量减少闭包的使用（内存优化）
+            - 在JS中避免“嵌套循环”和“死循环”
+            - 尽可能使用事件委托
+            - 尽量减少CSS表达式的使用(expression)
+            - CSS选择器解析规则是从右向左解析（基于less/sass开发的时候尽可能减少层级嵌套，目的是让选择器的前缀短一点）  【 a{}  和  .box a{}】
+            - 尽可能实现JS的封装（低耦合高内聚），减少页面中的冗余代码
+            - 在CSS导入的时候尽量减少使用@import导入式
+            - 使用window.requestAnimationFrame（JS中的帧动画）代替传统的定时器动画（能用CSS3动画的绝对不用JS动画）
+            - 减少递归的使用，避免死递归，避免由于递归导致的栈内存嵌套
+            - 基于SCRIPT调取JS的时候，可已使用 defer或者async 来异步加载
+            - 压缩代码
+        四: 安全优化
+            - XSS攻击
+            - CSRF攻击
+        五: webpack上的优化
+
+    -->
+</body>
+</html>
