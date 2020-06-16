@@ -151,3 +151,18 @@ let,const
 扩展运算符
 
 
+
+
+```javascript
+var f = function(){
+    this.a = 'a';
+    this.b = 'b';
+    this.c = {
+        a: 'a+',
+        b: ()=> this.a
+    }
+}
+consol.log(new f().c.b())
+```
+
+

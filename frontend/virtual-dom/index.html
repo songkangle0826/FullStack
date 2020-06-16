@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="box">
+    <p class="item">节点1</p>
+</div>
+
+<!--
+    什么是虚拟DOM?
+    - 由于浏览器的标准过于复杂,我们自己使用JS对象Object来描述原生的DOM.
+-->
+
+
+<script>
+
+    let div = createElement()
+    /*
+        function createElement(){
+            return{
+                tag: 'div',
+                data:{
+                    id:'app'
+                },
+                children:[{
+                    tag: 'p',
+                    data: {
+                        class: 'item'
+                    },
+                    children: ['节点']
+                }]
+            }
+        }
+        console.log(document.getElementById('box'));
+        let div = document.createElement('div');
+        let ret = '';
+        for(let key in div){
+            ret+= key+ '  ';
+        }
+        console.log(ret);  // dom属性过多
+     */
+</script>
+</body>
+</html>
