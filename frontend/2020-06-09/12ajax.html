@@ -19,5 +19,93 @@
             + 服务端渲染
             + 客户端渲染
     -->
+
+
+    <!--
+        ajax的基础操作
+            核心操作
+                - 1.创建一个XHR对象 (不兼容XMLHttpRequest的浏览器使用ActiveXObject创建)
+                - 2.打开请求连接(配置请求信息)
+                    + xhr.open([MEthod],[URL],[ASYNC],[USE-NAME],[USE-PASS])
+                        [MEthod]请求方式
+                            + GET系列,从服务获取
+                            + POST系列,向服务器发送数据
+                        [ASYNC]是否为异步请求,默认是true,也就是异步,设置为false代表当前请求任务为同步(项目中基本上才不异步请求)
+                        [USE-NAME],[USE-PASS]: 向服务请求发送请求所携带的用户名密码,只有在服务器设置了安全来宾账号的情况下需要(一般不用)
+                - 3.监听请求状态,在不同状态中做不同的事情
+                - 4.发送AJAX请求(AJAX任务开始,直到响应主体信息返回[AJAX状态为4]代表当前任务结束)
+
+
+            [GET]请求和[POST]请求的区别?
+                不管是哪一种请求方式,客户端都可以吧信息传递给服务器.服务器也可以把信息返回给客户端,只不过GET偏向于拿(给的少拿的多),而POST偏向于给(给的多拿的少).
+                [GET系列]:
+                    GET、
+                    HEAD(只获取响应头的信息,不获取响应主体的内容)、
+                    DELETE(删除,一般代指删除服务器上指定的文件)、
+                    OPTIONS(试探性请求,在CROSS跨域请求中,所有正常请求发送前,先发送一个试探性请求,验证是否可以和服务器正常的建立连接)
+                [POST系列]:
+                    POST、
+                    PUT(新增,一般代指向服务器中新增文件)、
+
+
+            基于GET向服务器发送请求,传递给服务器的方式:
+                + 基于请求头传递服务器(想把本地的cookie信息传递给服务器)
+                + 请求URL地址后面的问号传参(只要方式)  xhr.open('get','./data.json?id=2&lx=0',);
+
+            基于POST像服务器发送请求,传递给服务器的方式:
+                + 基于请求头传递给服务器
+                + 基于请求主体,把信息传递给服务器(主要方式):  xhr.open('post','./data.json'); xhr.send(data数据)
+
+
+
+            传递给服务器的数据格式:
+                + application/x-www-form-urlencoded:  xxx=xx&xx=xxx (最常用的方式) [字符串]
+                + multipart/form-data(也很常用,例如,表单提交,)  [对象]
+                + raw(可以上传text,json,xml,html等格式的文本,富文本编辑器中的内容可以基于这种格式传递) [字符串]
+                + binary(上传二进制数据或者编码格式的数据)      [二进制文件]
+                + ...
+
+    -->
+    <script>
+        {
+            // 基于get请求
+            let xhr = new XMLHttpRequest();
+            xhr.open('get','./data.json?lx=1&name=haha');
+            xhr.send()
+        }
+
+
+
+
+        {
+            // 基于post请求=> application/x-www-form-urlencoded
+            let xhr = new XMLHttpRequest();
+            xhr.open('post','./data.json');
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send('lx=1&name=haha');
+        }
+
+
+        {
+            // 基于post请求=> multipart/form-data
+            let xhr = new XMLHttpRequest();
+            xhr.open('post','./data.json');
+            xhr.setRequestHeader('Content-Type','multipart/form-data');
+            let fromData = new FormData();
+            fromData.append('lx','1');
+            fromData.append('name','哈啊哈');
+            xhr.send(fromData)
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+
 </body>
 </html>
