@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>倒计时</title>
+</head>
+<body>
+    <div class="box">
+        距离请够时间还剩 <span>00:16:34</span>
+    </div>
+</body>
+<script>
+    /*
+    *
+    * 有一个目标核定时间: 2020/02/25 20:30:00
+    * 获取当前时间: 2020/02/25 20:10:00
+    * */
+
+    // 获取当前时间(但是这个时间客户可以自己修改本地的时间): 真实项目中只能做一些参考点工作:不能做严谨的校验;严格校验的情况下,我们需要的时间是从服务器是从服务器取的.
+
+    let time = new Date();
+
+
+
+    // 如何从服务器获取时间,以及存在的问题
+    // 1.可以基于ajax向服务器发送请求,服务器返回的信息中,响应头中包含了服务器时间(格林时间=>转换为北京时间 new Date(转换的时间))
+    // 2.由于网络协议传送存在时间差,导致客户端接收到的服务器时间和真实时间存在偏差
+        // + 响应头信息返回(AJAX状态为2的时候),我们及获取到时间即可
+        // + HTTP传输中的HEAD请求方式,就是值获取响应头的信息
+
+
+    function queryServerTime(){
+        return new Promise((resolve,reject)=>{
+            console.log(11);
+            let xhr = new XMLHttpRequest();
+            xhr.open('head','./data.json');
+            xhr.onreadystatechange = function(){
+
+                if(/^(2|3)\d{2}$/.test(xhr.status) && xhr.readyState ===2 ){
+                    // 响应头头信息已返回
+                    let time = xhr.getResponseHeader('date');
+                    time = new Date(time);
+                    resolve(time);
+                }else{
+                    reject();
+                }
+            }
+            xhr.send();
+        })
+    }
+
+    async function init(){
+        console.log(111);
+        let  serverTime = await queryServerTime(),
+            targetTime = new Date('2020/06/21 20:30:00');
+
+        computed();
+        function computed() {
+            console.log(serverTime,targetTime)
+            let spanTime = targetTime - serverTime;  // 得到的是毫秒时间戳
+
+
+            // 相差天数
+            let day = Math.floor( spanTime / (24*60*60*1000) ),
+                dayTime = spanTime % (24*60*60*1000),
+
+                // 相差的小时
+                level1 = dayTime % (24 * 60 * 60 * 1000),
+                hours = Math.floor(level1/(60 * 60 * 1000)),
+
+                // 相差的分钟
+                level2 = level1 % (60 * 60 * 1000),
+                min = Math.floor(level2 / (60*1000)),
+
+                // 相差的秒数
+                level3 = level2 % (60 * 1000),
+                sec = Math.floor(level3 / (1000));
+
+
+            console.log(day,hours,min,sec)
+        }
+        
+        
+        
+        
+    }
+
+    init();
+
+</script>
+</html>

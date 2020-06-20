@@ -30,3 +30,114 @@ print(a);
 
 _ = 'alex';
 print(_)
+
+
+
+a = 10;
+print(a);
+print("a");
+
+# 常量 => 没有绝对的常量,约定俗成的全大写就为常量
+PI = 3.141592653;
+print(PI);
+PI = 3.15;
+print(PI);
+
+# 数据类型
+# 整数
+'''
+整数(int):
+常见的数字都是int类型,用于计算或者大小的比较
+在32位机器上int的范围是: -2^31~2^21,即正负21亿
+在64位机器上int的范围是: -2^63~2^63,
+'''
+a = 128;
+# 打印a的数据类型
+print(type(a));     #打印a的数据类型  python2中打印 <type 'int'>  python3打印<class 'int'>
+
+# 字符串
+'''
+在python中凡是带引号的都是字符串
+'''
+a = "哈哈哈哈哈";
+print(type(a));
+
+b = '我是';
+print(type(b));     #<class 'str'>
+
+s = '''
+    我也是字符串,神奇不神奇
+    我也是字符串,神奇不神奇1
+21
+'''
+
+print(s);
+print(type(s));     #<class 'str'>
+
+s = """
+我也是字符串,神奇不神奇
+    我也是字符串,神奇不神奇1
+"""  # 文本中写的什么就打印什么
+
+print(s);
+print(type(s));     #<class 'str'>
+
+
+## 请你打印出: 周杰伦说:"昆凌还不错,我很欣慰!"
+print('周杰伦说:"昆凌还不错,我很欣慰!"');
+print("周杰伦说:\"昆凌还不错,我很欣慰!\"");
+
+
+'''
+print("你好", end="");     # 在print之后,python解释器就会自动的添加换行符  print("你好",end="\n"),默认写法
+print("哈哈哈", end="");
+print("123哈哈哈", end="");
+'''
+
+print("你好","哈哈哈");     # "你好 哈哈哈"
+
+a = 10;
+print("a = ",a);          # a =  10
+
+
+# 字符的加减乘除
+# 加法: 字符串拼接(连接),只能同类型拼接
+s1 = "sylar";
+s2 = "1hahaha";
+s3 = s1 + s2;     # 字符串拼接(连接),只能同类型拼接
+print(s3);
+
+print("哈哈哈"+s1+"哈哈哈:"+s2);  # 哈哈哈sylar哈哈哈:1hahaha
+
+# 乘法:把前面的字符串乘以多少遍
+s = "考试\n";
+print(s*10);    # 把s重复10次
+
+
+# 布尔值(bool),真或者假,True和False;
+b = 1 > 2;
+print(b);   # False
+b = 2 > 1;
+print(b);   # True
+print(type(b));     # <class 'bool'>
+
+
+
+# 用户交互  -- 使用input()函数,可以让我们与计算机交互
+
+s = 1 #input("刘德华有木有我帅");  # 获取用户输入的内容(阻塞式),接收的内容永远是字符串.
+print(type(s));
+print("计算机收到的内容是",s);
+
+
+a = input("请输入一个数:");
+print(type(a));
+b = input("请输入另一个数:");
+print(type(b));
+print(int(a)+int(b));
+
+print(int("12"));  # 把传入的"字符串数字"转换成真正的数字
+
+
+# if/else
+
