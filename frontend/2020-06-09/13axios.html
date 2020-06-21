@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AXIOS</title>
+</head>
+<body>
+<!--
+    常用的AJAX库:(调用起来更方便,操作起来更简单)
+        + 以JQ/ZEPTO为主的AJAX库(把AJAX四步操作进行封装、提供了JSONP跨域处理,对于一些常用的操作[GET/POST/表单序列化/参数处理等])
+        + 以AXIOS为主的AJAX库(不仅AJAX进行了封装,而且基于PROMISE进行管理的) - [常用的]
+        + ES6中新增的内置类Fetch来完成HTTP数据请求(fetch不是AJAX,他是新的通讯方案:而且默认基于PROMISE进行管理)
+
+-->
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
+<script>
+    /* 自己探索JQ中AJAX库的应用和配置以及源码解析
+        $.ajax({
+            url: './data.json',
+            method: 'GET',
+            data:{
+                // 如果是GET请求,则是问号传参,POST请求则基于请求主体传参
+            },
+            success: function(result){
+                // 请求成功,从服务器获取的结果 RESULT
+            }
+        })
+    */
+
+
+    /*
+    * AXIOS: 基于PEOMISE进行管理的AJAX库
+    *
+    * */
+
+    axios.request({
+        url: './data.json',                         // 请求地址
+        method: 'get',                              // 请求方式
+        baseURL: 'http://127.0.0.1/api',            // 统一进本地址,一般是设置地址的前缀
+        headers: {                                  // 设置头信息
+            "Content-Type": 'application/x-www-form-urlencoded',
+        },
+        params:{},                                  // GET请求下,问号传参
+        data:{},                                    // POST请求下,请求主体传参信息
+    }).then((result)=>{
+        /*
+        * config: 你自己的配置信息
+        * headers:响应头信息
+        * request: 原生的XML AJAX对象
+        * status: 网络状态码
+        * statusText
+        * data: 存储的是响应主体信息
+        * */
+    });
+
+
+    /*
+    * AXIOS快捷的请求方法 axios.get/delete/head/post/put...或者 axios.all
+    * */
+    // get系列
+    axios.get('./data.json',{
+        params:{
+            lx:0
+        },
+        transformResponse: [function(result){
+            // 拿到请求主体的信息
+            console.log(result);
+            return result;
+        }]
+    })
+    // axios.post([url],[data],[options]) data请求主体
+    // axios基于请求主体传递给服务器的默认是json格式,如果想要变为x-www-form-urlencoded格式还需自己处理
+    axios.post('./data.json',{
+        lx: 0,
+        name: '哈哈哈'
+    },{
+        // 针对于POST系列,把传递给服务器请求的主体内容进行处理
+        transformRequest: [function(data){
+           // xxx=xx
+            let str = ``;
+            console.log(data)
+            for(let key in data){
+                if(data.hasOwnProperty(key)){
+                    str+=`&${key}=${data[key]}`
+                }
+            }
+            str = str.substring(1);
+            console.log(str)
+            return str;
+        }],
+        headers: {                                  // 设置头信息
+            "Content-Type": 'application/x-www-form-urlencoded',
+        },
+    })
+
+
+
+    let request1 = axios.get('./data.json');
+    let request2 = axios.get('./data.json');
+    let request3 = axios.get('./data.json');
+
+    axios.all([request1,request2,request3]).then(result=>{
+        // 所有的请求都成功才会执行 => Promise.all
+        console.log(result);
+    })
+    axios.all([request1,request2,request3]).then(
+        axios.spread((val1,val2,val3)=>{
+            // 把ALL返回的对个结果进行处理
+            console.log(val1,val2,val3)
+        })
+    );
+
+
+    /*
+    *
+    * 配置axios默认值
+    * */
+
+
+
+</script>
+</body>
+</html>
